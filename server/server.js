@@ -1,19 +1,21 @@
 const express = require("express");
 const path = require("path");
-const MoviesControllers = require("./controllers.js")
+const MoviesControllers = require("./controllers.js");
+const cors = require("cors");
 const app = express();
 
+app.use(cors());
 // PWAs want HTTPS!
-function checkHttps(request, response, next) {
-  // Check the protocol — if http, redirect to https.
-  if (request.get("X-Forwarded-Proto").indexOf("https") != -1) {
-    return next();
-  } else {
-    response.redirect("https://" + request.hostname + request.url);
-  }
-}
+//function checkHttps(request, response, next) {
+//// Check the protocol — if http, redirect to https.
+//if (request.get("X-Forwarded-Proto").indexOf("https") != -1) {
+//return next();
+//} else {
+//response.redirect("https://" + request.hostname + request.url);
+//}
+//}
 
-app.all("*", checkHttps);
+//app.all("*", checkHttps);
 
 // A test route to make sure the server is up.
 app.get("/api/ping", (request, response) => {
@@ -24,8 +26,16 @@ app.get("/api/ping", (request, response) => {
 // A mock route to return some data.
 app.get("/api/movies", (request, response) => {
   console.log("❇️ Received GET request to /api/movies");
-  response.json({ data: [{ id: 1, name: '1' }, { id: 2, name: '2' }] });
+  response.json({
+    data: [
+      { id: 1, name: "1" },
+      { id: 2, name: "2" },
+    ],
+  });
 });
+
+app.get("/restapi/movies", MoviesControllers.findAll);
+app.get("/restapi/movies/:id", MoviesControllers.findById);
 
 // Express port-switching logic
 let port;

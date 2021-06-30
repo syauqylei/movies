@@ -1,37 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Navbar } from "react-bootstrap";
+import Home from "./pages/Home";
 
 function App() {
   const [movies, setMovies] = useState([]);
   useEffect(() => {
-    async function getData() {
-      const response = await fetch('/api/movies');
-      const payload = await response.json();
-      setMovies(payload.data);
-    }
-    getData();
+    fetch("http://localhost:3001/restapi/movies")
+      .then((r) => r.json())
+      .then((data) => {
+        console.log(data);
+        setMovies(data);
+      });
   }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and your changes will live-update automatically.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <p>Nice Movies:</p>
-        <p>{JSON.stringify(movies)}</p>
-        
-      </header>
-    </div>
+    <Router>
+      <div>
+        <nav>
+          <Navbar bg="light" expand="lg">
+            <Navbar.Brand>
+              <Link to="/">Movies</Link>
+            </Navbar.Brand>
+          </Navbar>
+        </nav>
+
+        {/* A <Switch> looks through its children <Route>s and
+            renders the first one that matches the current URL. */}
+        <Switch>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
